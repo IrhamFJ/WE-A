@@ -3,75 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WhatsApp Web Clone</title>
+    <title>WhatsApp Clone v4</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root {
-            --wa-green: #075e54;
-            --wa-teal: #128c7e;
-            --wa-light-green: #25d366;
-            --chat-bg: #e5ddd5;
+        :root { --wa-teal: #128c7e; --wa-green: #25d366; }
+        html, body { 
+            touch-action: pan-x pan-y; 
+            user-select: none; 
+            overflow: hidden; 
+            width: 100%; height: 100%; position: fixed;
+            font-family: sans-serif;
         }
-
-        /* Anti-Zoom CSS */
-        html, body {
-            touch-action: pan-x pan-y;
-            user-select: none;
-            -webkit-user-select: none;
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-            position: fixed;
-        }
-
         .whatsapp-teal { background-color: var(--wa-teal); }
-        .whatsapp-green { background-color: var(--wa-green); }
-        
         .chat-wallpaper { 
             background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); 
-            background-color: var(--chat-bg);
+            background-color: #e5ddd5; 
         }
-
         .fab { 
-            position: fixed; bottom: 20px; right: 20px; 
-            width: 56px; height: 56px; 
-            background-color: var(--wa-light-green); 
-            border-radius: 50%; display: flex; 
-            align-items: center; justify-content: center; 
-            color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
-            cursor: pointer; z-index: 50; 
+            position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; 
+            background-color: var(--wa-green); border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 50; 
         }
-
         .hidden { display: none; }
-        
-        /* Izinkan scroll hanya pada area tertentu */
         .scrollable { overflow-y: auto; -webkit-overflow-scrolling: touch; }
-        
-        /* Bubble Chat */
-        .bubble-out { background-color: #dcf8c6; border-radius: 8px 0 8px 8px; align-self: flex-end; }
-        .bubble-in { background-color: #ffffff; border-radius: 0 8px 8px 8px; align-self: flex-start; }
+        .bubble-out { background-color: #dcf8c6; border-radius: 8px 0 8px 8px; align-self: flex-end; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body class="bg-white">
 
     <div id="screen-country" class="h-screen flex flex-col items-center justify-center p-6 bg-white">
         <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" class="w-16 mb-8">
-        <h2 class="text-xl font-bold mb-6 text-gray-700">Pilih negara Anda</h2>
+        <h2 class="text-xl font-bold mb-6">Pilih negara Anda</h2>
         <select id="country-select" class="w-full max-w-xs p-2 border-b-2 border-green-600 outline-none mb-8 bg-transparent">
             <option value="+62">Indonesia (+62)</option>
-            <option value="+1">Amerika Serikat (+1)</option>
-            <option value="+44">Inggris (+44)</option>
+            <option value="+1">USA (+1)</option>
+            <option value="+44">UK (+44)</option>
         </select>
-        <button onclick="generateNumbers()" class="bg-green-600 text-white px-8 py-2 rounded shadow font-bold text-sm tracking-widest">LANJUT</button>
+        <button onclick="generateNumbers()" class="bg-green-600 text-white px-8 py-2 rounded shadow font-bold tracking-widest">LANJUT</button>
     </div>
 
     <div id="screen-numbers" class="hidden h-screen p-6 bg-white flex flex-col">
-        <h2 class="text-lg font-bold mb-2 text-teal-800">Daftar Nomor Tersedia</h2>
-        <p class="text-xs text-gray-400 mb-6 italic">Klik 'Salin', lalu tempelkan di kotak bawah.</p>
+        <h2 class="text-lg font-bold mb-2 text-teal-800">Daftar Nomor (12 Digit)</h2>
+        <p class="text-xs text-gray-400 mb-6 italic">Salin nomor di bawah & tempel di kotak input</p>
         <div id="number-list" class="space-y-3 mb-8"></div>
-        
         <input id="input-number" type="tel" placeholder="Tempel nomor di sini..." class="w-full p-3 border rounded-lg mb-4 outline-none focus:ring-2 focus:ring-green-500">
-        <button onclick="goToHome()" class="w-full whatsapp-teal text-white py-3 rounded shadow-lg font-bold">MASUK SEKARANG</button>
+        <button onclick="goToHome()" class="w-full whatsapp-teal text-white py-3 rounded shadow-lg font-bold uppercase">Masuk ke WhatsApp</button>
     </div>
 
     <div id="screen-home" class="hidden h-screen flex flex-col bg-white">
@@ -80,40 +57,31 @@
                 <span class="text-xl font-medium">WhatsApp</span>
                 <div class="flex gap-5"><span>🔍</span><span>⋮</span></div>
             </div>
-            <div class="flex justify-around text-xs font-bold uppercase tracking-wider">
+            <div class="flex justify-around text-xs font-bold uppercase">
                 <span class="border-b-2 border-white pb-2 w-1/3 text-center">Chat</span>
                 <span class="opacity-70 w-1/3 text-center">Status</span>
-                <span class="opacity-70 w-1/3 text-center">Panggilan</span>
+                <span class="opacity-70 w-1/3 text-center">Calls</span>
             </div>
         </header>
-
         <div id="empty-chats" class="flex-1 flex flex-col items-center justify-center text-gray-400 p-10 text-center">
             <div class="bg-gray-100 rounded-full p-6 mb-4">💬</div>
-            <p class="text-sm">Belum ada chat. Ketuk tombol di pojok bawah untuk menambah kontak.</p>
+            <p class="text-sm">Klik tombol + untuk tambah kontak</p>
         </div>
-
         <div id="contact-list" class="flex-1 scrollable"></div>
-
-        <div onclick="addNewContact()" class="fab">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="white"><path d="M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6V13z"/></svg>
-        </div>
+        <div onclick="addNewContact()" class="fab"><span class="text-3xl">+</span></div>
     </div>
 
     <div id="screen-chat" class="hidden h-screen flex flex-col">
         <header class="whatsapp-teal p-3 text-white flex items-center gap-3">
             <button onclick="showScreen('screen-home')" class="text-xl pr-1">←</button>
-            <div class="w-10 h-10 bg-gray-200 rounded-full overflow-hidden">
-                <img src="https://i.pravatar.cc/150?u=a" id="chat-avatar">
-            </div>
+            <div class="w-10 h-10 bg-gray-300 rounded-full overflow-hidden" id="chat-pfp"></div>
             <div class="flex-1">
-                <h3 id="chat-target-name" class="font-bold text-sm">Nama Kontak</h3>
+                <h3 id="chat-target-name" class="font-bold text-sm">Nama</h3>
                 <p class="text-[10px] opacity-80">Online</p>
             </div>
             <div class="flex gap-4">📞 ⋮</div>
         </header>
-        
         <div id="chat-messages" class="flex-1 chat-wallpaper p-4 scrollable flex flex-col gap-2"></div>
-        
         <footer class="p-2 bg-[#f0f0f0] flex items-center gap-2">
             <input id="msg-input" type="text" placeholder="Ketik pesan" class="flex-1 p-2 rounded-full outline-none px-4 text-sm shadow-inner" style="user-select: text;">
             <button onclick="sendMsg()" class="whatsapp-teal text-white w-10 h-10 rounded-full flex items-center justify-center">➤</button>
@@ -121,11 +89,9 @@
     </div>
 
     <script>
-        // Mencegah Zoom dengan Keyboard/Mouse
-        document.addEventListener('keydown', e => {
-            if (e.ctrlKey && (e.key === '=' || e.key === '-' || e.key === '0')) e.preventDefault();
-        });
+        // Disable Zoom Desktop
         document.addEventListener('wheel', e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
+        document.addEventListener('keydown', e => { if (e.ctrlKey && [187, 189, 48].includes(e.keyCode)) e.preventDefault(); });
 
         function generateNumbers() {
             const code = document.getElementById('country-select').value;
@@ -135,11 +101,12 @@
             for(let i=0; i<5; i++) {
                 let numStr = "";
                 if(code === "+62") {
-                    // Logika: +62 + 8 + 9 digit acak (Total 12 digit)
+                    // +62 + 8 + 9 digit acak = 10 digit setelah +62 (Total 12 angka)
                     let rand = Math.floor(100000000 + Math.random() * 900000000);
-                    numStr = code + "8" + rand;
+                    numStr = code + "8" + rand; 
                 } else {
-                    let rand = Math.floor(1000000000 + Math.random() * 9000000000);
+                    // Negara lain simulasi 12 digit angka juga
+                    let rand = Math.floor(10000000000 + Math.random() * 90000000000);
                     numStr = code + rand;
                 }
                 
@@ -157,39 +124,31 @@
         }
 
         function goToHome() {
-            if(!document.getElementById('input-number').value) return alert("Salin nomor dulu!");
+            if(document.getElementById('input-number').value.length < 10) return alert("Nomor tidak valid!");
             showScreen('screen-home');
         }
 
         function addNewContact() {
             const name = prompt("Nama Kontak:");
-            const phone = prompt("Nomor HP (Contoh: +628...):");
-            
+            const phone = prompt("Nomor HP (+628...):");
             if(name && phone) {
                 document.getElementById('empty-chats').classList.add('hidden');
                 const list = document.getElementById('contact-list');
                 const div = document.createElement('div');
-                div.className = "flex items-center p-4 border-b active:bg-gray-100 cursor-pointer transition";
+                div.className = "flex items-center p-4 border-b active:bg-gray-100 cursor-pointer";
                 div.onclick = () => openChat(name);
                 div.innerHTML = `
-                    <div class="w-12 h-12 bg-gray-300 rounded-full mr-4 overflow-hidden">
-                        <img src="https://i.pravatar.cc/150?u=${name}">
-                    </div>
-                    <div class="flex-1 border-none">
-                        <div class="flex justify-between mb-1">
-                            <h4 class="font-bold text-gray-800">${name}</h4>
-                            <span class="text-[10px] text-gray-400">Baru Saja</span>
-                        </div>
+                    <div class="w-12 h-12 bg-gray-300 rounded-full mr-4 flex items-center justify-center text-white font-bold">${name[0]}</div>
+                    <div class="flex-1">
+                        <div class="flex justify-between"><h4 class="font-bold text-gray-800">${name}</h4><span class="text-[10px] text-gray-400">12:00</span></div>
                         <p class="text-xs text-gray-500 truncate">${phone}</p>
-                    </div>
-                `;
+                    </div>`;
                 list.appendChild(div);
             }
         }
 
         function openChat(name) {
             document.getElementById('chat-target-name').innerText = name;
-            document.getElementById('chat-avatar').src = `https://i.pravatar.cc/150?u=${name}`;
             document.getElementById('chat-messages').innerHTML = "";
             showScreen('screen-chat');
         }
@@ -198,14 +157,8 @@
             const inp = document.getElementById('msg-input');
             const box = document.getElementById('chat-messages');
             if(!inp.value) return;
-            
             const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            box.innerHTML += `
-                <div class="bubble-out p-2 px-3 shadow-sm max-w-[85%] text-sm relative text-gray-800">
-                    ${inp.value}
-                    <span class="text-[9px] text-gray-500 block text-right mt-1">${time} ✓✓</span>
-                </div>`;
-            
+            box.innerHTML += `<div class="bubble-out p-2 px-3 max-w-[85%] text-sm relative ml-auto">${inp.value}<span class="text-[9px] text-gray-500 block text-right mt-1">${time} ✓✓</span></div>`;
             inp.value = "";
             box.scrollTop = box.scrollHeight;
         }
